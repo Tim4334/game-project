@@ -1,0 +1,19 @@
+body { /* Body Styles */
+    display: flex;
+    margin: 0; padding: 0;
+    background-color: #0a0a0a;
+    background-size: 30px 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+    font-family: monospace;
+}
+#game { display: block; border-radius: 6px; } /* Canvas Styles */
+.game-window { /* Game Window Styles */
+    border: 2px solid #00ff41;
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0, 255, 65, 0.3), inset 0 0 20px rgba(0, 255, 65, 0.1);
+    background-color: #000;
+}
