@@ -144,3 +144,73 @@ function spawnVirus(isChaser) {
     }
     viruses.push(v);
 }
+
+// Update Logic
+function update(dt) {
+    if (state === 'win_anim') {
+        crackProgress += dt * 1.5;
+        if (crackProgress > 1.5) state = 'win_screen';
+        return;
+    }
+    if (state !== 'playing') return;
+
+    let prevX = player.x, prevY = player.y;
+    if (keys['ArrowLeft'] || keys['a'] || keys['ф']) player.x -= player.speed * dt;
+    if (keys['ArrowRight'] || keys['d'] || keys['в']) player.x += player.speed * dt;
+    if (keys['ArrowUp'] || keys['w'] || keys['ц']) player.y -= player.speed * dt;
+    if (keys['ArrowDown'] || keys['s'] || keys['ы']) player.y += player.speed * dt;
+    
+    player.x = Math.max(0, Math.min(canvas.width - player.w, player.x));
+    player.y = Math.max(0, Math.min(canvas.height - player.h, player.y));
+    
+    if (walls.some(w => checkCollision(player, w))) {
+        player.x = prevX; player.y = prevY;
+    }
+    if (player.invTime > 0) player.invTime -= dt;
+
+    if (chaserTimer > 0 && (chaserTimer -= dt) <= 0) spawnVirus(true);
+
+    for (let i = viruses.length - 1; i >= 0; i--) {
+        let v = viruses[i];
+
+        if (v.isChaser) {
+            let dx = player.x - v.x, dy = player.y - v.y;
+            let dist = Math.hypot(dx, dy);
+            if (dist > 0) { 
+                v.x += (dx / dist) * CHASER_SPEED * dt; 
+                v.y += (dy / dist) * CHASER_SPEED * dt; 
+            }
+            
+            v.lifeTime -= dt;
+            if (v.lifeTime <= 0) {
+                v.alpha -= dt * 2;
+                if (v.alpha <= 0) {
+                    viruses.splice(i, 1);
+                    chaserTimer = 10 + Math.random() * 10; 
+                }
+            }
+        } else {
+            v.x += v.vx * dt; v.y += v.vy * dt;
+            if (v.x < 0 || v.x + v.w > canvas.width) v.vx *= -1;
+            if (v.y < 0 || v.y + v.h > canvas.height) v.vy *= -1;
+            if (walls.some(w => checkCollision(v, w))) {
+                v.vx *= -1; v.vy *= -1;
+                v.x += v.vx * dt * 2; v.y += v.vy * dt * 2;
+            }
+        }
+
+        if (checkCollision(player, v) && player.invTime <= 0) {
+            player.hp -= DAMAGE_ON_HIT; 
+            player.invTime = 1.0;
+            if (player.hp <= 0) { player.hp = 0; state = 'lose'; }
+        }
+    }
+
+    for (let s of shields) {
+        if (!s.isCollected && checkCollision(player, s)) {
+            s.isCollected = true; 
+            collected++;
+            if (collected >= TOTAL_SHIELDS) state = 'win_anim';
+        }
+    }
+}
