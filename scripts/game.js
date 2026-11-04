@@ -104,3 +104,43 @@ function drawButton(btn, color) {
     ctx.textBaseline = 'middle';
     ctx.fillText(btn.text, btn.x + btn.w / 2, btn.y + btn.h / 2);
 }
+
+// Initialization and Spawning
+function resetGame() {
+    player.x = 400; player.y = 300; player.hp = 100; player.invTime = 0;
+    collected = 0; chaserTimer = 5; crackProgress = 0;
+    viruses = []; shields = [];
+
+    walls = [
+        {x: 100, y: 100, w: 200, h: 20}, {x: 500, y: 100, w: 200, h: 20},
+        {x: 300, y: 200, w: 20, h: 150}, {x: 100, y: 350, w: 250, h: 20},
+        {x: 450, y: 250, w: 20, h: 250}, {x: 600, y: 350, w: 150, h: 20},
+        {x: 200, y: 480, w: 300, h: 20}
+    ];
+
+    for (let i = 0; i < TOTAL_SHIELDS; i++) {
+        let s = { x: 0, y: 0, w: 24, h: 24, isCollected: false };
+        do { s.x = Math.random() * 700 + 50; s.y = Math.random() * 500 + 50; } while (walls.some(w => checkCollision(s, w)));
+        shields.push(s);
+    }
+
+    for (let i = 0; i < 5; i++) spawnVirus(false);
+}
+
+function spawnVirus(isChaser) {
+    let v = {
+        id: Math.floor(Math.random() * 5) + 1,
+        x: 0, y: 0, w: 32, h: 32, vx: 0, vy: 0,
+        isChaser: isChaser,
+        lifeTime: isChaser ? (CHASER_LIFE_MIN + Math.random() * (CHASER_LIFE_MAX - CHASER_LIFE_MIN)) : 0,
+        alpha: 1
+    };
+
+    do { v.x = Math.random() * 700 + 50; v.y = Math.random() * 500 + 50; } while (walls.some(w => checkCollision(v, w)));
+
+    if (!isChaser) {
+        v.vx = (Math.random() - 0.5) * 300;
+        v.vy = (Math.random() - 0.5) * 300;
+    }
+    viruses.push(v);
+}
