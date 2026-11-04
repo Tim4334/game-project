@@ -295,3 +295,14 @@ function draw() {
         }
     }
 }
+
+// Main Loop
+function loop(now) {
+    let dt = Math.min((now - lastTime) / 1000, 0.1);
+    lastTime = now;
+    update(dt);
+    draw();
+    requestAnimationFrame(loop);
+}
+
+requestAnimationFrame(loop);
