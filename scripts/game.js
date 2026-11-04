@@ -18,8 +18,8 @@ const assets = {
     enemies: [new Image(), new Image(), new Image(), new Image(), new Image()]
 };
 
-assets.player.src = 'assets/player.png';
-assets.shield.src = 'assets/shield.png';
+assets.player.src = 'assets/player.svg';
+assets.shield.src = 'assets/shield.svg';
 assets.chaser.src = 'assets/chaser.png';
 for (let i = 0; i < 5; i++) assets.enemies[i].src = `assets/enemy${i + 1}.png`;
 
