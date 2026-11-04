@@ -25,7 +25,7 @@ for (let i = 0; i < 5; i++) assets.enemies[i].src = `assets/enemy${i + 1}.png`;
 
 // Game State Variables
 let state = 'menu';
-let playerName = "Игрок";
+let playerName = "player";
 let lastTime = performance.now();
 let collected = 0;
 let chaserTimer = 5;
@@ -38,10 +38,40 @@ const player = {
     speed: PLAYER_SPEED, hp: 100, invTime: 0 
 };
 
-const btnRestart = { x: 250, y: 420, w: 140, h: 50, text: "ЗАНОВО" };
-const btnMenu = { x: 410, y: 420, w: 140, h: 50, text: "В МЕНЮ" };
+const btnRestart = { x: 250, y: 420, w: 140, h: 50, text: "Restart" };
+const btnMenu = { x: 410, y: 420, w: 140, h: 50, text: "On the menu" };
 
 // Arrays
 let viruses = [];
 let shields = [];
 let walls = [];
+
+// Event Listeners
+window.addEventListener('keydown', e => { 
+    keys[e.key] = true; 
+    if([' ','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)) e.preventDefault(); 
+});
+window.addEventListener('keyup', e => keys[e.key] = false);
+
+canvas.addEventListener('click', (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const clickX = e.clientX - rect.left;
+    const clickY = e.clientY - rect.top;
+
+    if (state === 'menu') {
+        playerName = prompt("Enter your name:") || "player";
+        resetGame(); 
+        state = 'playing';
+    } 
+    else if (state === 'lose' || state === 'win_screen') {
+        if (clickX >= btnRestart.x && clickX <= btnRestart.x + btnRestart.w &&
+            clickY >= btnRestart.y && clickY <= btnRestart.y + btnRestart.h) {
+            resetGame(); 
+            state = 'playing';
+        }
+        if (clickX >= btnMenu.x && clickX <= btnMenu.x + btnMenu.w &&
+            clickY >= btnMenu.y && clickY <= btnMenu.y + btnMenu.h) {
+            state = 'menu';
+        }
+    }
+});
