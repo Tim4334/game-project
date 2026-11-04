@@ -5,3 +5,7 @@ const CHASER_SPEED = 150;
 const CHASER_LIFE_MIN = 5;
 const CHASER_LIFE_MAX = 15;
 const DAMAGE_ON_HIT = 15;
+
+// DOM and Context
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
