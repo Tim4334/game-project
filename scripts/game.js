@@ -214,3 +214,84 @@ function update(dt) {
         }
     }
 }
+
+// Rendering
+function draw() {
+    ctx.fillStyle = '#000'; 
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    if (state === 'menu') {
+        ctx.fillStyle = '#00ff41'; ctx.font = '40px monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+        ctx.fillText("CREEPER.EXE", 400, 250);
+        ctx.fillStyle = '#fff'; ctx.font = '20px monospace';
+        ctx.fillText("Кликни, чтобы начать взлом", 400, 320);
+        return;
+    }
+    
+    if (state === 'lose') {
+        ctx.fillStyle = '#ff3333'; ctx.font = '50px monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+        ctx.fillText("GAME OVER", 400, 250);
+        ctx.fillStyle = '#fff'; ctx.font = '20px monospace';
+        ctx.fillText(`${playerName}, вирус тебя одолел.`, 400, 320);
+        drawButton(btnRestart, '#ff3333');
+        drawButton(btnMenu, '#555555');
+        return;
+    }
+    
+    if (state === 'win_screen') {
+        ctx.fillStyle = '#00ffff'; ctx.font = '50px monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+        ctx.fillText("СИСТЕМА ВЗЛОМАНА", 400, 220);
+        ctx.fillStyle = '#fff'; ctx.font = '24px monospace';
+        ctx.fillText("С Днём Рождения, Creeper!", 400, 290);
+        drawButton(btnRestart, '#00ff41');
+        drawButton(btnMenu, '#555555');
+        return;
+    }
+
+    ctx.fillStyle = '#1a1a1a';
+    walls.forEach(w => { 
+        ctx.fillRect(w.x, w.y, w.w, w.h); 
+        ctx.strokeStyle = '#333'; 
+        ctx.strokeRect(w.x, w.y, w.w, w.h); 
+    });
+
+    shields.forEach(s => {
+        if (!s.isCollected) drawSprite(assets.shield, s.x, s.y, s.w, s.h, '#00ffff');
+    });
+
+    viruses.forEach(v => {
+        ctx.save(); 
+        ctx.globalAlpha = v.alpha;
+        if (v.isChaser) {
+            drawSprite(assets.chaser, v.x, v.y, v.w, v.h, '#ff0000');
+        } else {
+            let colors = ['#ff5555', '#55ff55', '#5555ff', '#ff55ff', '#ffff55'];
+            drawSprite(assets.enemies[v.id - 1], v.x, v.y, v.w, v.h, colors[v.id - 1]);
+        }
+        ctx.restore();
+    });
+
+    if (player.invTime <= 0 || Math.floor(performance.now() / 100) % 2 === 0) {
+        drawSprite(assets.player, player.x, player.y, player.w, player.h, '#00ff41');
+    }
+
+    let grad = ctx.createRadialGradient(player.x + 15, player.y + 15, 40, player.x + 15, player.y + 15, 180);
+    grad.addColorStop(0, 'rgba(0, 0, 0, 0)'); 
+    grad.addColorStop(1, 'rgba(0, 0, 0, 0.98)');
+    ctx.fillStyle = grad; 
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = '#00ff41'; ctx.font = '20px monospace'; ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+    ctx.fillText(`HP: ${player.hp}`, 20, 40);
+    ctx.fillStyle = '#00ffff'; ctx.textAlign = 'right';
+    ctx.fillText(`Щиты: ${collected}/${TOTAL_SHIELDS}`, 780, 40);
+
+    if (state === 'win_anim') {
+        ctx.strokeStyle = '#fff'; ctx.lineWidth = 3;
+        for (let i = 0; i < 30; i++) {
+            ctx.beginPath(); ctx.moveTo(400, 300);
+            let a = Math.random() * Math.PI * 2, l = Math.random() * 400 * crackProgress;
+            ctx.lineTo(400 + Math.cos(a) * l, 300 + Math.sin(a) * l); ctx.stroke();
+        }
+    }
+}
