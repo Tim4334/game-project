@@ -75,3 +75,32 @@ canvas.addEventListener('click', (e) => {
         }
     }
 });
+
+
+// Helper Functions
+function checkCollision(a, b) {
+    return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+}
+
+function drawSprite(img, x, y, w, h, fallbackColor) {
+    if (img.complete && img.naturalWidth > 0) {
+        ctx.drawImage(img, x, y, w, h);
+    } else {
+        ctx.fillStyle = fallbackColor;
+        ctx.fillRect(x, y, w, h);
+    }
+}
+
+function drawButton(btn, color) {
+    ctx.fillStyle = color;
+    ctx.fillRect(btn.x, btn.y, btn.w, btn.h);
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(btn.x, btn.y, btn.w, btn.h);
+    
+    ctx.fillStyle = '#000';
+    ctx.font = '20px monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(btn.text, btn.x + btn.w / 2, btn.y + btn.h / 2);
+}
