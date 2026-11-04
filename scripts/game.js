@@ -22,3 +22,26 @@ assets.player.src = 'assets/player.png';
 assets.shield.src = 'assets/shield.png';
 assets.chaser.src = 'assets/chaser.png';
 for (let i = 0; i < 5; i++) assets.enemies[i].src = `assets/enemy${i + 1}.png`;
+
+// Game State Variables
+let state = 'menu';
+let playerName = "Игрок";
+let lastTime = performance.now();
+let collected = 0;
+let chaserTimer = 5;
+let crackProgress = 0;
+const keys = {};
+
+// Game Objects
+const player = { 
+    x: 400, y: 300, w: 30, h: 30, 
+    speed: PLAYER_SPEED, hp: 100, invTime: 0 
+};
+
+const btnRestart = { x: 250, y: 420, w: 140, h: 50, text: "ЗАНОВО" };
+const btnMenu = { x: 410, y: 420, w: 140, h: 50, text: "В МЕНЮ" };
+
+// Arrays
+let viruses = [];
+let shields = [];
+let walls = [];
